@@ -52,6 +52,8 @@ export class QuoteService {
 
     queryBuilder.leftJoinAndSelect('quote.author', 'author');
 
+    queryBuilder.leftJoinAndSelect('quote.book', 'book');
+
     const quoteEntity = await queryBuilder.getOne();
 
     if (!quoteEntity) {
@@ -72,6 +74,8 @@ export class QuoteService {
     const queryBuilder = this.quoteRepository.createQueryBuilder('quote');
 
     queryBuilder.leftJoinAndSelect('quote.author', 'author');
+
+    queryBuilder.leftJoinAndSelect('quote.book', 'book');
 
     const quoteEntity = await queryBuilder.getMany();
 

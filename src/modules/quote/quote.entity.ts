@@ -5,6 +5,8 @@ import { AbstractEntity } from '../../common/abstract.entity';
 import { UseDto } from '../../decorators';
 import type { IAuthorEntity } from '../author/author.entity';
 import { AuthorEntity } from '../author/author.entity';
+import type { IBookEntity } from '../book/book.entity';
+import { BookEntity } from '../book/book.entity';
 import { QuoteDto } from './dto/quote.dto';
 
 export interface IQuoteEntity extends IAbstractEntity<QuoteDto> {
@@ -14,6 +16,7 @@ export interface IQuoteEntity extends IAbstractEntity<QuoteDto> {
   position: number;
   enabled: boolean;
   author?: IAuthorEntity;
+  book?: IBookEntity;
 }
 
 @Entity({ name: 'quotes' })
@@ -39,4 +42,7 @@ export class QuoteEntity
 
   @ManyToOne(() => AuthorEntity, (author) => author.quotes)
   author?: AuthorEntity;
+
+  @ManyToOne(() => BookEntity, (book) => book.quotes)
+  book?: BookEntity;
 }
