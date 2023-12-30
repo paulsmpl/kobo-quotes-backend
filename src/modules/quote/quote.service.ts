@@ -48,7 +48,9 @@ export class QuoteService {
   async getQuote(quoteId: number): Promise<QuoteDto> {
     const queryBuilder = this.quoteRepository.createQueryBuilder('quote');
 
-    queryBuilder.where('quote.id = :quoteId', { quoteId });
+    queryBuilder.andWhere('quote.enabled = :enabled', { enabled: true });
+
+    queryBuilder.andWhere('quote.id = :quoteId', { quoteId });
 
     queryBuilder.leftJoinAndSelect('quote.author', 'author');
 
@@ -72,6 +74,8 @@ export class QuoteService {
 
   async getAllQuote(): Promise<QuoteDto[]> {
     const queryBuilder = this.quoteRepository.createQueryBuilder('quote');
+
+    queryBuilder.andWhere('quote.enabled = :enabled', { enabled: true });
 
     queryBuilder.leftJoinAndSelect('quote.author', 'author');
 

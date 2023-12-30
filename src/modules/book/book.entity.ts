@@ -19,7 +19,7 @@ export class BookEntity extends AbstractEntity<BookDto> implements IBookEntity {
   @Column({ type: 'varchar', unique: false, nullable: true })
   book_name: string;
 
-  @Column({ type: 'bool', unique: false, nullable: true })
+  @Column({ type: 'boolean', unique: false, nullable: true })
   enabled: boolean;
 
   @OneToMany(() => QuoteEntity, (quote) => quote.author)

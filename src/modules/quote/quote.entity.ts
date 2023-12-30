@@ -37,7 +37,7 @@ export class QuoteEntity
   @Column({ type: 'int', unique: false, nullable: true })
   position: number;
 
-  @Column({ type: 'bool', unique: false, nullable: true })
+  @Column({ type: 'boolean', unique: false, nullable: true })
   enabled: boolean;
 
   @ManyToOne(() => AuthorEntity, (author) => author.quotes)
