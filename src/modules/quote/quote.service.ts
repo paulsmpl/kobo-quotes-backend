@@ -50,6 +50,8 @@ export class QuoteService {
 
     queryBuilder.where('quote.id = :quoteId', { quoteId });
 
+    queryBuilder.leftJoinAndSelect('quote.author', 'author');
+
     const quoteEntity = await queryBuilder.getOne();
 
     if (!quoteEntity) {
@@ -68,6 +70,8 @@ export class QuoteService {
 
   async getAllQuote(): Promise<QuoteDto[]> {
     const queryBuilder = this.quoteRepository.createQueryBuilder('quote');
+
+    queryBuilder.leftJoinAndSelect('quote.author', 'author');
 
     const quoteEntity = await queryBuilder.getMany();
 

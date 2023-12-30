@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { AbstractDto } from '../../../common/dto/abstract.dto';
+import type { AuthorEntity } from '../../author/author.entity';
 import type { QuoteEntity } from '../quote.entity';
 
 export class QuoteDto extends AbstractDto {
@@ -15,6 +16,8 @@ export class QuoteDto extends AbstractDto {
 
   enabled: boolean;
 
+  author?: AuthorEntity;
+
   constructor(quote: QuoteEntity) {
     super(quote);
     this.authorId = quote.author_id;
@@ -22,5 +25,6 @@ export class QuoteDto extends AbstractDto {
     this.quote = quote.quote;
     this.position = quote.position;
     this.enabled = quote.enabled;
+    this.author = quote.author;
   }
 }

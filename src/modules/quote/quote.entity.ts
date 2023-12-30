@@ -1,8 +1,10 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 import type { IAbstractEntity } from '../../common/abstract.entity';
 import { AbstractEntity } from '../../common/abstract.entity';
 import { UseDto } from '../../decorators';
+import type { IAuthorEntity } from '../author/author.entity';
+import { AuthorEntity } from '../author/author.entity';
 import { QuoteDto } from './dto/quote.dto';
 
 export interface IQuoteEntity extends IAbstractEntity<QuoteDto> {
@@ -11,6 +13,7 @@ export interface IQuoteEntity extends IAbstractEntity<QuoteDto> {
   quote: string;
   position: number;
   enabled: boolean;
+  author?: IAuthorEntity;
 }
 
 @Entity({ name: 'quotes' })
@@ -33,4 +36,7 @@ export class QuoteEntity
 
   @Column({ type: 'bool', unique: false, nullable: true })
   enabled: boolean;
+
+  @ManyToOne(() => AuthorEntity, (author) => author.quotes)
+  author?: AuthorEntity;
 }
