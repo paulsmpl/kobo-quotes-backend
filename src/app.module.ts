@@ -8,12 +8,14 @@ import path from 'path';
 import { DataSource } from 'typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 
+import { BookModule } from './modules/book/book.module';
 import { HealthCheckerModule } from './modules/health-checker/health-checker.module';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
+    BookModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
