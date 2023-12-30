@@ -11,6 +11,7 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
 import { AuthorModule } from './modules/author/author.module';
 import { BookModule } from './modules/book/book.module';
 import { HealthCheckerModule } from './modules/health-checker/health-checker.module';
+import { QuoteModule } from './modules/quote/quote.module';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { SharedModule } from './shared/shared.module';
 
@@ -18,6 +19,7 @@ import { SharedModule } from './shared/shared.module';
   imports: [
     BookModule,
     AuthorModule,
+    QuoteModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
