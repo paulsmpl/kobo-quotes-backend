@@ -97,4 +97,33 @@ export class QuoteService {
 
     return quoteEntity.toDtos();
   }
+
+  async getRandomQuote(): Promise<QuoteDto> {
+    const queryBuilder = this.quoteRepository.createQueryBuilder('quote');
+
+    queryBuilder.andWhere('quote.enabled = :enabled', { enabled: true });
+
+    queryBuilder.leftJoinAndSelect('quote.author', 'author');
+
+    queryBuilder.leftJoinAndSelect('quote.book', 'book');
+
+    queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
+
+    queryBuilder.orderBy('RAND()');
+
+    const quoteEntity = await queryBuilder.getOne();
+
+    if (!quoteEntity) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: this.i18n.t('quote.errors.notFound'),
+          error: this.i18n.t('quote.errors.notFound'),
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return quoteEntity.toDto();
+  }
 }

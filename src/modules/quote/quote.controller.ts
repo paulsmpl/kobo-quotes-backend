@@ -43,6 +43,17 @@ export class QuoteController {
     return this.quoteService.getAllQuote();
   }
 
+  @Get('random')
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Get random quote',
+    type: QuoteDto,
+  })
+  getRandomQuote(): Promise<QuoteDto> {
+    return this.quoteService.getRandomQuote();
+  }
+
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
