@@ -98,7 +98,7 @@ export class QuoteService {
     return quoteEntity.toDtos();
   }
 
-  async getRandomQuote(): Promise<QuoteDto> {
+  async getRandomQuote(bookIds?: number[]): Promise<QuoteDto> {
     const queryBuilder = this.quoteRepository.createQueryBuilder('quote');
 
     queryBuilder.andWhere('quote.enabled = :enabled', { enabled: true });
@@ -108,6 +108,24 @@ export class QuoteService {
     queryBuilder.leftJoinAndSelect('quote.book', 'book');
 
     queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
+
+    if (bookIds) {
+      switch (typeof bookIds) {
+        case 'string': {
+          queryBuilder.andWhere('book.id IN(:...ids)', { ids: [bookIds] });
+          break;
+        }
+
+        case 'object': {
+          queryBuilder.andWhere('book.id IN(:...ids)', { ids: bookIds });
+          break;
+        }
+
+        default: {
+          break;
+        }
+      }
+    }
 
     queryBuilder.orderBy('RAND()');
 
