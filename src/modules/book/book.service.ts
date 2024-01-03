@@ -36,6 +36,8 @@ export class BookService {
   ): Promise<PageDto<BookDto>> {
     const queryBuilder = this.bookRepository.createQueryBuilder('book');
 
+    queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
+
     const [items, pageMetaDto] = await queryBuilder.paginate(pageOptionsDto);
 
     return items.toPageDto(pageMetaDto);
@@ -44,7 +46,9 @@ export class BookService {
   async getBook(bookId: number): Promise<BookDto> {
     const queryBuilder = this.bookRepository.createQueryBuilder('book');
 
-    queryBuilder.where('book.id = :bookId', { bookId });
+    queryBuilder.andWhere('book.id = :bookId', { bookId });
+
+    queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
 
     const bookEntity = await queryBuilder.getOne();
 
@@ -64,6 +68,8 @@ export class BookService {
 
   async getAllBook(): Promise<BookDto[]> {
     const queryBuilder = this.bookRepository.createQueryBuilder('book');
+
+    queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
 
     const bookEntity = await queryBuilder.getMany();
 

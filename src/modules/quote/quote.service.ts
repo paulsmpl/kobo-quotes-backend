@@ -40,6 +40,14 @@ export class QuoteService {
   ): Promise<PageDto<QuoteDto>> {
     const queryBuilder = this.quoteRepository.createQueryBuilder('quote');
 
+    queryBuilder.andWhere('quote.enabled = :enabled', { enabled: true });
+
+    queryBuilder.leftJoinAndSelect('quote.author', 'author');
+
+    queryBuilder.leftJoinAndSelect('quote.book', 'book');
+
+    queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
+
     const [items, pageMetaDto] = await queryBuilder.paginate(pageOptionsDto);
 
     return items.toPageDto(pageMetaDto);
@@ -55,6 +63,8 @@ export class QuoteService {
     queryBuilder.leftJoinAndSelect('quote.author', 'author');
 
     queryBuilder.leftJoinAndSelect('quote.book', 'book');
+
+    queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
 
     const quoteEntity = await queryBuilder.getOne();
 
@@ -80,6 +90,8 @@ export class QuoteService {
     queryBuilder.leftJoinAndSelect('quote.author', 'author');
 
     queryBuilder.leftJoinAndSelect('quote.book', 'book');
+
+    queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
 
     const quoteEntity = await queryBuilder.getMany();
 
