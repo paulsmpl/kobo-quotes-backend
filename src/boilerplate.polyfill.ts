@@ -57,10 +57,10 @@ function groupRows<T>(
 
     const items = raws.get(id);
 
-    if (!items) {
-      raws.set(id, [rawResult]);
-    } else {
+    if (items) {
       items.push(rawResult);
+    } else {
+      raws.set(id, [rawResult]);
     }
   }
 
@@ -215,7 +215,9 @@ SelectQueryBuilder.prototype.paginate = async function (
       })
       .join('_');
 
-    const entity = entities.find((item) => item.id === id) as AbstractEntity;
+    const entity = entities.find(
+      (item) => item.id?.toString() === id.toString(),
+    ) as AbstractEntity;
     const metaInfo: Record<string, string> =
       Reflect.getMetadata(VIRTUAL_COLUMN_KEY, entity) ?? {};
 
