@@ -7,6 +7,7 @@ export class BookDto extends AbstractDto {
   @ApiProperty()
   bookName: string;
 
+  @ApiProperty()
   enabled: boolean;
 
   constructor(book: BookEntity) {

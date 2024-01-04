@@ -7,10 +7,11 @@ import {
   Query,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { PageDto } from '../../common/dto/page.dto';
 import { ApiPageOkResponse } from '../../decorators';
+import { ParamRandomQuoteDto } from './dto/params-random-quote.dto';
 import { QuoteDto } from './dto/quote.dto';
 import { QuotePageOptionsDto } from './dto/quote-page-options.dto';
 import { QuoteService } from './quote.service';
@@ -50,9 +51,11 @@ export class QuoteController {
     description: 'Get random quote',
     type: QuoteDto,
   })
-  @ApiQuery({ name: 'bookIds', required: false, type: [Number] })
-  getRandomQuote(@Query('bookIds') bookIds?: number[]): Promise<QuoteDto> {
-    return this.quoteService.getRandomQuote(bookIds);
+  getRandomQuote(
+    @Query(new ValidationPipe({ transform: true }))
+    paramRandomQuoteDto?: ParamRandomQuoteDto,
+  ): Promise<QuoteDto> {
+    return this.quoteService.getRandomQuote(paramRandomQuoteDto);
   }
 
   @Get(':id')

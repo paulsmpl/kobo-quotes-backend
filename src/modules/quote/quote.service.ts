@@ -5,6 +5,7 @@ import type { FindOptionsWhere } from 'typeorm';
 import { Repository } from 'typeorm';
 
 import type { PageDto } from '../../common/dto/page.dto';
+import type { ParamRandomQuoteDto } from './dto/params-random-quote.dto';
 import type { QuoteDto } from './dto/quote.dto';
 import type { QuotePageOptionsDto } from './dto/quote-page-options.dto';
 import { QuoteEntity } from './quote.entity';
@@ -98,7 +99,9 @@ export class QuoteService {
     return quoteEntity.toDtos();
   }
 
-  async getRandomQuote(bookIds?: number[]): Promise<QuoteDto> {
+  async getRandomQuote(
+    paramRandomQuoteDto?: ParamRandomQuoteDto,
+  ): Promise<QuoteDto> {
     const queryBuilder = this.quoteRepository.createQueryBuilder('quote');
 
     queryBuilder.andWhere('quote.enabled = :enabled', { enabled: true });
@@ -109,25 +112,43 @@ export class QuoteService {
 
     queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
 
-    if (bookIds) {
-      switch (typeof bookIds) {
-        case 'string': {
-          queryBuilder.andWhere('book.id IN(:...ids)', { ids: [bookIds] });
-          break;
-        }
-
-        case 'object': {
-          queryBuilder.andWhere('book.id IN(:...ids)', { ids: bookIds });
-          break;
-        }
-
-        default: {
-          break;
-        }
-      }
+    // first time
+    if (
+      !paramRandomQuoteDto?.newBookId &&
+      !paramRandomQuoteDto?.currerntQuoteId
+    ) {
+      queryBuilder.orderBy('RAND()');
     }
 
-    queryBuilder.orderBy('RAND()');
+    let currerntQuote: QuoteDto;
+
+    // same book, based on ascending position
+    if (paramRandomQuoteDto?.currerntQuoteId) {
+      currerntQuote = await this.getQuote(paramRandomQuoteDto.currerntQuoteId);
+
+      queryBuilder.andWhere('book.id = :currerntBookId', {
+        currerntBookId: currerntQuote.bookId,
+      });
+
+      queryBuilder.andWhere('quote.position > :currerntQuotePosition', {
+        currerntQuotePosition: currerntQuote.position,
+      });
+
+      queryBuilder.andWhere('quote.id != :currerntQuoteId', {
+        currerntQuoteId: currerntQuote.id,
+      });
+
+      queryBuilder.orderBy('quote.position', 'ASC');
+    }
+
+    // change book
+    if (paramRandomQuoteDto?.newBookId) {
+      queryBuilder.andWhere('book.id = :bookId', {
+        bookId: paramRandomQuoteDto.newBookId,
+      });
+
+      queryBuilder.orderBy('quote.position', 'ASC');
+    }
 
     const quoteEntity = await queryBuilder.getOne();
 

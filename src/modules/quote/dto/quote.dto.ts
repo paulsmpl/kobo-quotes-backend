@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { AbstractDto } from '../../../common/dto/abstract.dto';
 import type { AuthorEntity } from '../../author/author.entity';
@@ -9,16 +10,22 @@ export class QuoteDto extends AbstractDto {
   @ApiProperty()
   authorId: number;
 
+  @ApiProperty()
   bookId: number;
 
+  @ApiProperty()
   quote: string;
 
+  @ApiProperty()
   position: number;
 
+  @ApiProperty()
   enabled: boolean;
 
+  @ApiPropertyOptional()
   author?: AuthorEntity;
 
+  @ApiPropertyOptional()
   book?: BookEntity;
 
   constructor(quote: QuoteEntity) {
