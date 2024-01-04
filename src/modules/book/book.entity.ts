@@ -8,7 +8,7 @@ import { QuoteEntity } from '../quote/quote.entity';
 import { BookDto } from './dto/book.dto';
 
 export interface IBookEntity extends IAbstractEntity<BookDto> {
-  book_name: string;
+  bookName: string;
   enabled: boolean;
   quotes?: IQuoteEntity[];
 }
@@ -17,7 +17,7 @@ export interface IBookEntity extends IAbstractEntity<BookDto> {
 @UseDto(BookDto)
 export class BookEntity extends AbstractEntity<BookDto> implements IBookEntity {
   @Column({ type: 'varchar', unique: false, nullable: true })
-  book_name: string;
+  bookName: string;
 
   @Column({ type: 'boolean', unique: false, nullable: true })
   enabled: boolean;

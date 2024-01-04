@@ -11,7 +11,7 @@ export class BookDto extends AbstractDto {
 
   constructor(book: BookEntity) {
     super(book);
-    this.bookName = book.book_name;
+    this.bookName = book.bookName;
     this.enabled = book.enabled;
   }
 }

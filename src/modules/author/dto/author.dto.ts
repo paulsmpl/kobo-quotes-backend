@@ -9,6 +9,6 @@ export class AuthorDto extends AbstractDto {
 
   constructor(author: AuthorEntity) {
     super(author);
-    this.authorName = author.author_name;
+    this.authorName = author.authorName;
   }
 }

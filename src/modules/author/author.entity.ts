@@ -8,7 +8,7 @@ import { QuoteEntity } from '../quote/quote.entity';
 import { AuthorDto } from './dto/author.dto';
 
 export interface IAuthorEntity extends IAbstractEntity<AuthorDto> {
-  author_name: string;
+  authorName: string;
   quotes?: IQuoteEntity[];
 }
 
@@ -19,7 +19,7 @@ export class AuthorEntity
   implements IAuthorEntity
 {
   @Column({ type: 'varchar', unique: false, nullable: true })
-  author_name: string;
+  authorName: string;
 
   @OneToMany(() => QuoteEntity, (quote) => quote.author)
   quotes?: QuoteEntity[];
