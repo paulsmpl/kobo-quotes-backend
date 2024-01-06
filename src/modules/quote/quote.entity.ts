@@ -10,8 +10,8 @@ import { BookEntity } from '../book/book.entity';
 import { QuoteDto } from './dto/quote.dto';
 
 export interface IQuoteEntity extends IAbstractEntity<QuoteDto> {
-  author_id: number;
-  book_id: number;
+  authorId: number;
+  bookId: number;
   quote: string;
   position: number;
   enabled: boolean;
@@ -26,10 +26,10 @@ export class QuoteEntity
   implements IQuoteEntity
 {
   @Column({ type: 'int', unique: false, nullable: true })
-  author_id: number;
+  authorId: number;
 
   @Column({ type: 'int', unique: false, nullable: true })
-  book_id: number;
+  bookId: number;
 
   @Column({ type: 'text', unique: false, nullable: true })
   quote: string;

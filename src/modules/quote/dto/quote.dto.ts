@@ -30,8 +30,8 @@ export class QuoteDto extends AbstractDto {
 
   constructor(quote: QuoteEntity) {
     super(quote);
-    this.authorId = quote.author_id;
-    this.bookId = quote.book_id;
+    this.authorId = quote.authorId;
+    this.bookId = quote.bookId;
     this.quote = quote.quote;
     this.position = quote.position;
     this.enabled = quote.enabled;
