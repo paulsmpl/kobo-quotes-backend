@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
@@ -164,5 +165,15 @@ export class QuoteService {
     }
 
     return quoteEntity.toDto();
+  }
+
+  async insert(quotes) {
+    await this.quoteRepository.clear();
+
+    const quoteEntities = this.quoteRepository.create(quotes);
+
+    await this.quoteRepository.insert(quoteEntities);
+
+    return quoteEntities;
   }
 }

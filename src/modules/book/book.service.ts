@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { I18nService } from 'nestjs-i18n';
@@ -74,5 +75,15 @@ export class BookService {
     const bookEntity = await queryBuilder.getMany();
 
     return bookEntity.toDtos();
+  }
+
+  async insert(books) {
+    await this.bookRepository.clear();
+
+    const bookEntities = this.bookRepository.create(books);
+
+    await this.bookRepository.insert(bookEntities);
+
+    return bookEntities;
   }
 }
