@@ -22,6 +22,12 @@ export class QuoteDto extends AbstractDto {
   @ApiProperty()
   enabled: boolean;
 
+  @ApiProperty()
+  startContainerPath: string;
+
+  @ApiProperty()
+  endContainerPath: string;
+
   @ApiPropertyOptional()
   author?: AuthorEntity;
 
@@ -37,5 +43,7 @@ export class QuoteDto extends AbstractDto {
     this.enabled = quote.enabled;
     this.author = quote.author;
     this.book = quote.book;
+    this.startContainerPath = quote.startContainerPath;
+    this.endContainerPath = quote.endContainerPath;
   }
 }

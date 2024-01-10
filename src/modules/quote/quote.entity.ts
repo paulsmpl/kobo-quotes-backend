@@ -40,6 +40,12 @@ export class QuoteEntity
   @Column({ type: 'boolean', unique: false, nullable: true })
   enabled: boolean;
 
+  @Column({ type: 'text', unique: false, nullable: true })
+  startContainerPath: string;
+
+  @Column({ type: 'text', unique: false, nullable: true })
+  endContainerPath: string;
+
   @ManyToOne(() => AuthorEntity, (author) => author.quotes)
   author?: AuthorEntity;
 
