@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable sonarjs/cognitive-complexity */
 import { Injectable, UploadedFile } from '@nestjs/common';
 import Database from 'better-sqlite3';
 import * as fs from 'fs-extra';
@@ -20,14 +21,14 @@ export class UploadService {
     private readonly quoteService: QuoteService,
   ) {}
 
-  getPosition = (value: any) => {
+  getPosition = (startContainerPath: any) => {
     let result = 0;
 
-    if (!value) {
+    if (!startContainerPath) {
       return result;
     }
 
-    const array = value.split('/');
+    const array = startContainerPath.split('/');
 
     if (array.length > 0) {
       let lastString = array[array.length - 1];
@@ -46,10 +47,11 @@ export class UploadService {
 
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     const db = new Database(`${file.destination}/${file.filename}`);
-
-    const oldAuthors = await this.authorService.getAllAuthor();
-    const oldBooks = await this.bookService.getAllBook();
-    const oldQuotes = await this.quoteService.getAllQuote();
+    const [oldAuthors, oldBooks, oldQuotes] = await Promise.all([
+      await this.authorService.getAllAuthor(),
+      await this.bookService.getAllBook(),
+      await this.quoteService.getAllQuote(),
+    ]);
 
     const dataSqlite: any = db
       .prepare(
@@ -61,81 +63,81 @@ export class UploadService {
       )
       .all();
 
-    let newAuthors: any = [];
-    let newBooks: any = [];
-    let newQuotes: any = [];
+    let authors: any = [...oldAuthors];
+    let books: any = [...oldBooks];
+    let quotes: any = [...oldQuotes];
 
-    for (const [index, row] of dataSqlite.entries()) {
-      const position = this.getPosition(row?.startContainerPath);
-
-      let quote: any = {
-        id: index + 1,
-        quote: row?.quote,
-        position,
-        enabled: true,
-        startContainerPath: row?.startContainerPath,
-        endContainerPath: row?.endContainerPath,
-      };
-      const indexAuthor = newAuthors.findIndex(
-        (element) => element?.authorName === row?.authorName,
+    for (const quote of dataSqlite) {
+      const indexAuthor = authors.findIndex(
+        (element) => element.authorName === quote.authorName,
       );
-      const indexBook = newBooks.findIndex(
-        (element) => element?.bookName === row?.bookName,
+      const indexBook = books.findIndex(
+        (element) => element.bookName === quote.bookName,
+      );
+      const indexQuote = quotes.findIndex(
+        (element) =>
+          element.startContainerPath === quote.startContainerPath &&
+          element.endContainerPath === quote.endContainerPath,
       );
 
       if (indexAuthor === -1) {
-        newAuthors = [
-          ...newAuthors,
-          {
-            id: newAuthors.length + 1,
-            authorName: row?.authorName,
-          },
+        authors = [
+          ...authors,
+          { id: authors.length + 1, authorName: quote.authorName },
         ];
-        quote = {
-          ...quote,
-          authorId: newAuthors.length,
-        };
       } else {
-        quote = {
-          ...quote,
-          authorId: indexAuthor + 1,
+        authors[indexAuthor] = {
+          ...authors[indexAuthor],
+          authorName: quote.authorName,
         };
       }
 
       if (indexBook === -1) {
-        newBooks = [
-          ...newBooks,
-          {
-            id: newBooks.length + 1,
-            bookName: row?.bookName,
-            enabled: true,
-          },
+        books = [
+          ...books,
+          { id: books.length + 1, bookName: quote.bookName, enabled: true },
         ];
-        quote = {
-          ...quote,
-          bookId: newBooks.length,
-        };
       } else {
-        quote = {
-          ...quote,
-          bookId: indexBook + 1,
+        books[indexBook] = {
+          ...books[indexBook],
+          bookName: quote.bookName,
+          enabled: true,
         };
       }
 
-      newQuotes = [...newQuotes, quote];
+      if (indexQuote === -1) {
+        quotes = [
+          ...quotes,
+          {
+            id: quotes.length + 1,
+            authorId: indexAuthor === -1 ? authors.length : indexAuthor,
+            bookId: indexBook === -1 ? books.length : indexBook,
+            quote: quote.quote,
+            position: this.getPosition(quote.startContainerPath),
+            enabled: true,
+            startContainerPath: quote.startContainerPath,
+            endContainerPath: quote.endContainerPath,
+          },
+        ];
+      } else {
+        quotes[indexQuote] = {
+          ...quotes[indexQuote],
+          authorId: authors[indexAuthor].id,
+          bookId: books[indexBook].id,
+          quote: quote.quote,
+          position: this.getPosition(quote.startContainerPath),
+          enabled: true,
+          startContainerPath: quote.startContainerPath,
+          endContainerPath: quote.endContainerPath,
+        };
+      }
     }
 
-    let authors = [...oldAuthors];
-    let books = [...oldBooks];
-    let quotes = [...oldQuotes];
-
-    // TODO Check if quote exists then update. If not, add the book and author arrays then the quotes array
-
-    // await Promise.all([
-    //   this.authorService.insert(newAuthors),
-    //   this.bookService.insert(newBooks),
-    //   this.quoteService.insert(newQuotes),
-    // ]);
+    await Promise.all([
+      this.authorService.insert(authors),
+      this.bookService.insert(books),
+      this.quoteService.insert(quotes),
+    ]);
 
     // remove file
     fs.unlinkSync(`${file.destination}/${file.filename}`);
