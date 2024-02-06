@@ -5,5 +5,5 @@ export class ParamRandomQuoteDto {
   readonly newBookId?: number;
 
   @NumberFieldOptional({})
-  readonly currerntQuoteId?: number;
+  readonly currentQuoteId?: number;
 }

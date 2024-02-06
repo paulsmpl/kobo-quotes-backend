@@ -116,27 +116,27 @@ export class QuoteService {
     // first time
     if (
       !paramRandomQuoteDto?.newBookId &&
-      !paramRandomQuoteDto?.currerntQuoteId
+      !paramRandomQuoteDto?.currentQuoteId
     ) {
       queryBuilder.orderBy('RAND()');
     }
 
-    let currerntQuote: QuoteDto;
+    let currentQuote: QuoteDto;
 
     // same book, based on ascending position
-    if (paramRandomQuoteDto?.currerntQuoteId) {
-      currerntQuote = await this.getQuote(paramRandomQuoteDto.currerntQuoteId);
+    if (paramRandomQuoteDto?.currentQuoteId) {
+      currentQuote = await this.getQuote(paramRandomQuoteDto.currentQuoteId);
 
-      queryBuilder.andWhere('book.id = :currerntBookId', {
-        currerntBookId: currerntQuote.bookId,
+      queryBuilder.andWhere('book.id = :currentBookId', {
+        currentBookId: currentQuote.bookId,
       });
 
-      queryBuilder.andWhere('quote.position > :currerntQuotePosition', {
-        currerntQuotePosition: currerntQuote.position,
+      queryBuilder.andWhere('quote.position > :currentQuotePosition', {
+        currentQuotePosition: currentQuote.position,
       });
 
-      queryBuilder.andWhere('quote.id != :currerntQuoteId', {
-        currerntQuoteId: currerntQuote.id,
+      queryBuilder.andWhere('quote.id != :currentQuoteId', {
+        currentQuoteId: currentQuote.id,
       });
 
       queryBuilder.orderBy('quote.position', 'ASC');
