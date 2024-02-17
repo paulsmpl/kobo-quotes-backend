@@ -95,12 +95,18 @@ export class UploadService {
       if (indexBook === -1) {
         books = [
           ...books,
-          { id: books.length + 1, bookName: quote.bookName, enabled: true },
+          {
+            id: books.length + 1,
+            bookName: quote.bookName,
+            authorId: indexAuthor === -1 ? authors.length : indexAuthor,
+            enabled: true,
+          },
         ];
       } else {
         books[indexBook] = {
           ...books[indexBook],
           bookName: quote.bookName,
+          authorId: authors[indexAuthor].id,
           enabled: true,
         };
       }
