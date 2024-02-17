@@ -1,8 +1,10 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import type { IAbstractEntity } from '../../common/abstract.entity';
 import { AbstractEntity } from '../../common/abstract.entity';
 import { UseDto } from '../../decorators';
+import type { IAuthorEntity } from '../author/author.entity';
+import { AuthorEntity } from '../author/author.entity';
 import type { IQuoteEntity } from '../quote/quote.entity';
 import { QuoteEntity } from '../quote/quote.entity';
 import { BookDto } from './dto/book.dto';
@@ -11,6 +13,7 @@ export interface IBookEntity extends IAbstractEntity<BookDto> {
   bookName: string;
   enabled: boolean;
   quotes?: IQuoteEntity[];
+  author?: IAuthorEntity;
 }
 
 @Entity({ name: 'books' })
@@ -24,4 +27,7 @@ export class BookEntity extends AbstractEntity<BookDto> implements IBookEntity {
 
   @OneToMany(() => QuoteEntity, (quote) => quote.author)
   quotes?: QuoteEntity[];
+
+  @ManyToOne(() => AuthorEntity, (author) => author.books)
+  author?: AuthorEntity;
 }

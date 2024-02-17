@@ -72,6 +72,8 @@ export class BookService {
 
     queryBuilder.andWhere('book.enabled = :enabled', { enabled: true });
 
+    queryBuilder.leftJoinAndSelect('book.author', 'author');
+
     const bookEntity = await queryBuilder.getMany();
 
     return bookEntity.toDtos();
