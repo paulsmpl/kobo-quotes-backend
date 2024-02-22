@@ -67,17 +67,10 @@ export class UploadService {
     let books: any = [...oldBooks];
     let quotes: any = [...oldQuotes];
 
+    // add or update authors
     for (const quote of dataSqlite) {
       const indexAuthor = authors.findIndex(
         (element) => element.authorName === quote.authorName,
-      );
-      const indexBook = books.findIndex(
-        (element) => element.bookName === quote.bookName,
-      );
-      const indexQuote = quotes.findIndex(
-        (element) =>
-          element.startContainerPath === quote.startContainerPath &&
-          element.endContainerPath === quote.endContainerPath,
       );
 
       if (indexAuthor === -1) {
@@ -91,6 +84,16 @@ export class UploadService {
           authorName: quote.authorName,
         };
       }
+    }
+
+    // add or update books
+    for (const quote of dataSqlite) {
+      const indexAuthor = authors.findIndex(
+        (element) => element.authorName === quote.authorName,
+      );
+      const indexBook = books.findIndex(
+        (element) => element.bookName === quote.bookName,
+      );
 
       if (indexBook === -1) {
         books = [
@@ -98,7 +101,7 @@ export class UploadService {
           {
             id: books.length + 1,
             bookName: quote.bookName,
-            authorId: indexAuthor === -1 ? authors.length : indexAuthor,
+            authorId: authors[indexAuthor].id,
             enabled: true,
           },
         ];
@@ -110,14 +113,29 @@ export class UploadService {
           enabled: true,
         };
       }
+    }
+
+    // add or update quotes
+    for (const quote of dataSqlite) {
+      const indexAuthor = authors.findIndex(
+        (element) => element.authorName === quote.authorName,
+      );
+      const indexBook = books.findIndex(
+        (element) => element.bookName === quote.bookName,
+      );
+      const indexQuote = quotes.findIndex(
+        (element) =>
+          element.startContainerPath === quote.startContainerPath &&
+          element.endContainerPath === quote.endContainerPath,
+      );
 
       if (indexQuote === -1) {
         quotes = [
           ...quotes,
           {
             id: quotes.length + 1,
-            authorId: indexAuthor === -1 ? authors.length : indexAuthor,
-            bookId: indexBook === -1 ? books.length : indexBook,
+            authorId: authors[indexAuthor].id,
+            bookId: books[indexBook].id,
             quote: quote.quote,
             position: this.getPosition(quote.startContainerPath),
             enabled: true,
